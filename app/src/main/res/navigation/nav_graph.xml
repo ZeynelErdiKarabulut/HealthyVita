@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/guidanceFragment">
+
+    <fragment
+        android:id="@+id/questionsFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.questions.QuestionsFragment"
+        android:label="fragment_questions"
+        tools:layout="@layout/fragment_questions" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_doctorsFragment"
+            app:destination="@id/doctorsFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_guidanceFragment"
+            app:destination="@id/guidanceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/doctorRegisterFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.register.doctor.DoctorRegisterFragment"
+        android:label="fragment_doctor_register"
+        tools:layout="@layout/fragment_doctor_register" >
+        <action
+            android:id="@+id/action_doctorRegisterFragment_to_doctorsFragment"
+            app:destination="@id/doctorsFragment" />
+        <action
+            android:id="@+id/action_doctorRegisterFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/guidanceFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.onboarding.OnboardingFragment"
+        android:label="fragment_guidance"
+        tools:layout="@layout/fragment_onboarding" >
+        <action
+            android:id="@+id/action_guidanceFragment_to_doctorRegisterFragment"
+            app:destination="@id/doctorRegisterFragment" />
+        <action
+            android:id="@+id/action_guidanceFragment_to_patientRegisterFragment"
+            app:destination="@id/patientRegisterFragment" />
+        <action
+            android:id="@+id/action_guidanceFragment_to_doctorsFragment"
+            app:destination="@id/doctorsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/patientRegisterFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.register.patient.PatientRegisterFragment"
+        android:label="fragment_patient_register"
+        tools:layout="@layout/fragment_patient_register" >
+        <action
+            android:id="@+id/action_patientRegisterFragment_to_doctorsFragment"
+            app:destination="@id/doctorsFragment" />
+        <action
+            android:id="@+id/action_patientRegisterFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/doctorsFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.doctors.DoctorsFragment"
+        android:label="fragment_doctors"
+        tools:layout="@layout/fragment_doctors" >
+        <action
+            android:id="@+id/action_doctorsFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_doctorsFragment_to_patientRegisterFragment"
+            app:destination="@id/patientRegisterFragment" />
+        <action
+            android:id="@+id/action_doctorsFragment_to_doctorRegisterFragment"
+            app:destination="@id/doctorRegisterFragment" />
+        <action
+            android:id="@+id/action_doctorsFragment_to_guidanceFragment"
+            app:destination="@id/guidanceFragment"
+            app:popUpTo="@+id/doctorsFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="doctorInfo"
+            app:argType="com.zerdi.schoolchattingapp.presentation.doctors.DoctorFeedModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/forumFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.forum.forumfeed.ForumFragment"
+        android:label="fragment_forum"
+        tools:layout="@layout/fragment_forum" >
+        <action
+            android:id="@+id/action_forumFragment_to_forumDetailFragment"
+            app:destination="@id/forumDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forumDetailFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.forum.forumdetail.ForumDetailFragment"
+        android:label="fragment_forum_detail"
+        tools:layout="@layout/fragment_forum_detail" >
+        <argument
+            android:name="forumInfo"
+            app:argType="com.zerdi.schoolchattingapp.data.firebase.firestore.model.ForumModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/videoRoomFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.videocall.VideoRoomFragment"
+        android:label="fragment_video_room"
+        tools:layout="@layout/fragment_video_room" >
+        <action
+            android:id="@+id/action_videoRoomFragment_to_videoCallFragment"
+            app:destination="@id/videoCallFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/videoCallFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.videocall.VideoCallFragment"
+        android:label="fragment_video_call"
+        tools:layout="@layout/fragment_video_call" >
+        <argument
+            android:name="roomInfo"
+            app:argType="com.zerdi.schoolchattingapp.presentation.videocall.VideoCallModel" />
+        <action
+            android:id="@+id/action_videoCallFragment_to_videoRoomFragment"
+            app:destination="@id/videoRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/customDialogFragment"
+        android:name="com.zerdi.schoolchattingapp.presentation.profile.CustomDialogFragment"
+        android:label="CustomDialogFragment" >
+        <action
+            android:id="@+id/action_customDialogFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+</navigation>

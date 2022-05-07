@@ -1,0 +1,108 @@
+package com.zerdi.schoolchattingapp.presentation.forum.forumfeed
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.zerdi.schoolchattingapp.common.Resource
+import com.zerdi.schoolchattingapp.data.firebase.firestore.model.ForumModel
+import com.zerdi.schoolchattingapp.domain.AddForumMessageUseCase
+import com.zerdi.schoolchattingapp.domain.FetchDoctorInfoUseCase
+import com.zerdi.schoolchattingapp.domain.FetchForumMessagesUseCase
+import com.zerdi.schoolchattingapp.domain.FetchPatientInfoUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class ForumViewModel @Inject constructor(
+    private val addForumMessageUseCase: AddForumMessageUseCase,
+    private val fetchForumMessagesUseCase: FetchForumMessagesUseCase,
+    private val fetchDoctorUseCase: FetchDoctorInfoUseCase,
+    private val fetchPatientInfoUseCase: FetchPatientInfoUseCase
+) : ViewModel() {
+
+    private val uiState = MutableStateFlow(ForumState())
+    val _uiState: StateFlow<ForumState> = uiState.asStateFlow()
+
+    fun handleEvent(event: ForumEvent) {
+        when (event) {
+            is ForumEvent.GetPatientData -> {
+                event.currentUserId?.let { getPatientData(it) }
+            }
+            is ForumEvent.AddForumDataToFirebase -> {
+                viewModelScope.launch {
+                    event.forumModel?.let { addForumMessage(it) }
+                }
+            }
+            is ForumEvent.GetForumData -> {
+                getForumList()
+            }
+            is ForumEvent.GetDoctorData -> {
+                getDoctorData(event.currentUserId)
+            }
+        }
+    }
+
+    private fun addForumMessage(forumModel: ForumModel) {
+        viewModelScope.launch {
+            addForumMessageUseCase.invoke(forumModel).collect { }
+        }
+    }
+
+    private fun getDoctorData(currentUserId: String?) {
+        viewModelScope.launch {
+            if (currentUserId != null) {
+                fetchDoctorUseCase.invoke(currentUserId).collect { resultState ->
+                    when (resultState) {
+                        is Resource.Success -> {
+                            uiState.update { state ->
+                                state.copy(doctorInfo = resultState.data)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getForumList() {
+        viewModelScope.launch {
+            fetchForumMessagesUseCase.invoke().collect { resultState ->
+                when (resultState) {
+                    is Resource.Success -> {
+                        uiState.update { state ->
+                            state.copy(forumInfo = resultState.data as List<ForumModel>)
+                        }
+                    }
+                    is Resource.Error -> {
+                        uiState.update { state ->
+                            state.copy(error = resultState.message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        uiState.update { state ->
+                            state.copy(isLoading = true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getPatientData(currentUserId: String) {
+        viewModelScope.launch {
+            fetchPatientInfoUseCase.invoke(currentUserId).collect { resultState ->
+                when (resultState) {
+                    is Resource.Success -> {
+                        uiState.update { state ->
+                            state.copy(patientInfo = resultState.data)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
